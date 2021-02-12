@@ -3,25 +3,34 @@ package org.javacream.training.application;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @CrossOrigin
-public class PeopleRestController{
-	
+public class PeopleRestController {
 
-	@Autowired private PeopleRepository repo;
+	@Autowired
+	private PeopleRepository repo;
 
-	@RequestMapping(method=RequestMethod.GET, path="/people/{id}", produces="application/json")
+	@GetMapping(path = "/people/{id}", produces = "application/json")
 	public Person findPersonById(@PathVariable("id") Long personId) {
-		return repo.findOne(personId);
+		try {
+			return repo.findById(personId).get();
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		}
 	}
-	@RequestMapping(method=RequestMethod.GET, path="/people", produces="application/json")
+
+	@GetMapping(path = "/people", produces = "application/json")
 	public Person[] findAllPeople() {
 		List<Person> people = repo.findAll();
 		Person[] result = new Person[people.size()];
@@ -29,19 +38,28 @@ public class PeopleRestController{
 		return result;
 	}
 
-	@RequestMapping(method=RequestMethod.POST, path="/people", consumes="application/json")
-	public void savePerson(@RequestBody Person p) {
-		repo.save(p);
+	@PostMapping(path = "/people", consumes = "application/json")
+	public Long savePerson(@RequestBody Person p) {
+		try {
+			repo.save(p);
+			return p.getId();
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
+		}
 	}
 
-	@RequestMapping(method=RequestMethod.PUT, path="/people", consumes="application/json")
+	@PutMapping(path = "/people", consumes = "application/json")
 	public void updatePerson(@RequestBody Person p) {
 		repo.save(p);
 	}
 
-	@RequestMapping(method=RequestMethod.DELETE, path="/people/{id}")
+	@DeleteMapping(path = "/people/{id}")
 	public void deletePersonById(@PathVariable("id") Long personId) {
-		repo.delete(personId);
+		try {
+			repo.deleteById(personId);
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
+		}
 	}
 
 }

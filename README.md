@@ -7,3 +7,5 @@
   - change port using --server.port=<port>
 - browse to localhost:8080/people, you will see some data 
 - REST-API supports CRUD on endpoint /people, supported mediatype is JSON
+- Swagger UI available at http://localhost:8080/swagger-ui.html
+- Docker Image available, use docker push javacream/restserver:people

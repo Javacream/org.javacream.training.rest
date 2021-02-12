@@ -1,8 +1,6 @@
 package org.javacream.training.application;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,7 +9,8 @@ import javax.persistence.Table;
 @Table(name="PEOPLE")
 public class Person {
 
-	@Id @GeneratedValue(strategy=GenerationType.AUTO) private Long id;
+	@Id 
+	private Long id;
 	private String lastname;
 	private String firstname;
 	private char gender;
